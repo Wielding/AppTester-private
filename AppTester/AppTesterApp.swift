@@ -33,11 +33,11 @@ struct AppTesterApp: App {
             Image(systemName: "bolt.fill")
         }
         
-//        WindowGroup {
-//            CredentialsView()
-//                .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                .padding()
-//        }
+        //        WindowGroup {
+        //            CredentialsView()
+        //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        //                .padding()
+        //        }
     }
 }
 
@@ -56,13 +56,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if !context.loggedIn {
             let credentialsView = CredentialsView()
- 
+            
             window.center()
             window.setFrameAutosaveName("Credentials Window")
             window.contentView = NSHostingView(rootView: credentialsView)
             window.delegate = credentialsDelegate
             window.makeKeyAndOrderFront(nil)
-
+            
         }
         
         //        NSApplication.shared.setActivationPolicy(.regular)
@@ -71,8 +71,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if context.loggedIn {
             NSApp.setActivationPolicy(.prohibited)
         } else {
-//            NSApp.setActivationPolicy(.regular)
-//            NSApp.activate(ignoringOtherApps: true)
+            //            NSApp.setActivationPolicy(.regular)
+            //            NSApp.activate(ignoringOtherApps: true)
         }
     }
     
@@ -85,5 +85,31 @@ class CredentialsViewDelegate: NSObject, NSWindowDelegate {
     var context = Context.shared
     func windowWillClose(_ notification: Notification) {
         print("windowWillClose")
+        // save password and token in keychain
+        context.loggedIn = true
+        let tokenQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                    kSecAttrAccount as String: "pushinator.test",
+                                    kSecAttrServer as String: "pushinator.token.test",
+                                    kSecValueData as String: context.token.data(using: .utf8)!,]
+        
+        let tokenQueryStatus = SecItemAdd(tokenQuery as CFDictionary, nil)
+        
+        if tokenQueryStatus != errSecSuccess {
+            print("Error saving token to keychain")
+        }
+        
+        let passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                    kSecAttrAccount as String: "pushinator.test",
+                                    kSecAttrServer as String: "pushinator.password.test",
+                                    kSecValueData as String: context.password.data(using: .utf8)!,]
+        
+        let passwordQueryStatus = SecItemAdd(passwordQuery as CFDictionary, nil)
+        
+        if passwordQueryStatus != errSecSuccess {
+            print("Error saving password to keychain")
+        }
+        
+        
+        
     }
 }
