@@ -27,6 +27,19 @@ func SaveCredentials(context: Context) async -> Bool {
         }
         
     }
+    
+    let clientIdQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                     kSecAttrAccount as String: "pushinator.test",
+                                     kSecAttrServer as String: "pushinator.clientId.test",
+                                     kSecValueData as String: context.clientId.data(using: .utf8)!,]
+    
+    queue.async {
+        let clientIdQueryStatus = SecItemAdd(clientIdQuery as CFDictionary, nil)
+        
+        if clientIdQueryStatus != errSecSuccess {
+            print("Error saving clientId to keychain")
+        }
+    }
         
     //    let passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
     //                                     kSecAttrAccount as String: "pushinator.test",
@@ -47,7 +60,7 @@ func SaveCredentials(context: Context) async -> Bool {
 func LoadCredentials(context :inout Context) async -> Bool {
 //    let logger = Logger(subsystem: "net.wielding.pushinator", category: "LoadCredentials")
     
-    var tokenQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+    let tokenQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
                                      kSecAttrAccount as String: "pushinator.test",
                                      kSecAttrServer as String: "pushinator.token.test",
                                      kSecReturnData as String: kCFBooleanTrue as Any,
@@ -66,7 +79,7 @@ func LoadCredentials(context :inout Context) async -> Bool {
         context.haveCredentials = false
     }
     
-    var passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+    let passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
                                         kSecAttrAccount as String: "pushinator.test",
                                         kSecAttrServer as String: "pushinator.password.test",
                                         kSecReturnData as String: kCFBooleanTrue as Any,

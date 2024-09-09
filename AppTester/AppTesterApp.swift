@@ -21,7 +21,7 @@ class Context : ObservableObject {
 struct AppTesterApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var context = Context.shared
-//    let logger = Logger(subsystem: "net.wielding.pushinator", category: "AppTester")
+    //    let logger = Logger(subsystem: "net.wielding.pushinator", category: "AppTester")
     
     init() {
     }
@@ -34,6 +34,12 @@ struct AppTesterApp: App {
         } label: {
             Image(systemName: "bolt.fill")
         }
+        WindowGroup(id: "settings-view") {
+            SettingsView()
+                .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
+                .padding()
+        }
+        .defaultSize(CGSize(width: 400, height: 200))
         
         //        WindowGroup {
         //            CredentialsView()
@@ -48,16 +54,16 @@ struct AppTesterApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     var context = Context.shared
-
-//    var credentialsDelegate = CredentialsViewDelegate()
-//    let window = NSWindow(
-//        contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
-//        styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-//        backing: .buffered, defer: false)
-
+    
+    //    var credentialsDelegate = CredentialsViewDelegate()
+    //    let window = NSWindow(
+    //        contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
+    //        styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+    //        backing: .buffered, defer: false)
+    
     func application(_ application: NSApplication, open urls: [URL]) {
         let firstUrl = URLComponents(url: urls[0], resolvingAgainstBaseURL: false)
-       // parse last value after =
+        // parse last value after =
         let tokenFragment = firstUrl?.fragment
         
         let token = tokenFragment?.components(separatedBy: "=").last
@@ -84,20 +90,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
         }
         
-//
-//        
-//        print("applicationDidFinishLaunching")
-        NSApp.setActivationPolicy(.prohibited)
+        //
+        //
+        //        print("applicationDidFinishLaunching")
+                NSApp.setActivationPolicy(.accessory)
         
         //        NSApplication.shared.setActivationPolicy(.regular)
-        //        NSApplication.shared.activate(ignoringOtherApps: true)
+                NSApplication.shared.activate(ignoringOtherApps: true)
         
-//        if context.loggedIn {
-//            NSApp.setActivationPolicy(.prohibited)
-//        } else {
-//            //            NSApp.setActivationPolicy(.regular)
-//            //            NSApp.activate(ignoringOtherApps: true)
-//        }
+        //        if context.loggedIn {
+        //            NSApp.setActivationPolicy(.prohibited)
+        //        } else {
+        //            //            NSApp.setActivationPolicy(.regular)
+        //            //            NSApp.activate(ignoringOtherApps: true)
+        //        }
     }
     
     func applicationWillFinishLaunching(_ notification: Notification) {
