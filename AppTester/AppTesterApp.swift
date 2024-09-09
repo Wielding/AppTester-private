@@ -10,7 +10,7 @@ import OSLog
 
 class Context : ObservableObject {
     static let shared = Context()
-    var loggedIn: Bool = false
+    var haveCredentials: Bool = false
     var token: String = ""
     var password = ""
     var clientId = ""
@@ -65,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let token = token {
             context.token = token
             context.password = "Logged In"
-            context.loggedIn = true
+            context.haveCredentials = true
             Task {
                 await SaveCredentials(context: context)
             }

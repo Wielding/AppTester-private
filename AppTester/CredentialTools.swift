@@ -23,7 +23,7 @@ func SaveCredentials(context: Context) async -> Bool {
         if tokenQueryStatus != errSecSuccess {
             print("Error saving token to keychain")
         } else {
-            context.loggedIn = true
+            context.haveCredentials = true
         }
         
     }
@@ -41,7 +41,7 @@ func SaveCredentials(context: Context) async -> Bool {
     //        }
     //    }
     
-    return context.loggedIn
+    return context.haveCredentials
 }
 
 func LoadCredentials(context :inout Context) async -> Bool {
@@ -59,11 +59,11 @@ func LoadCredentials(context :inout Context) async -> Bool {
     if tokenQueryStatus == errSecSuccess {
         let tokenData = item as! Data
         context.token = String(data: tokenData, encoding: .utf8)!
-        context.loggedIn = true
+        context.haveCredentials = true
     } else {
         context.logger.error("Error loading token from keychain")
         
-        context.loggedIn = false
+        context.haveCredentials = false
     }
     
     var passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
@@ -77,17 +77,17 @@ func LoadCredentials(context :inout Context) async -> Bool {
     if passwordQueryStatus == errSecSuccess {
         let passwordData = item as! Data
         context.password = String(data: passwordData, encoding: .utf8)!
-        context.loggedIn = true
+        context.haveCredentials = true
     } else {
         context.logger.error("Error loading password from keychain")
-        context.loggedIn = false
+        context.haveCredentials = false
     }
     
-    if context.loggedIn {
+    if context.haveCredentials {
         context.logger.info("Credentials loaded successfully")
     }
     
-    return context.loggedIn
+    return context.haveCredentials
     
 }
 

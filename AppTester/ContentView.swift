@@ -17,7 +17,7 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .task {
-            while !context.loggedIn {
+            while !context.haveCredentials {
                 await Task.sleep(1000)
                 print("waiting for login")
             }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "LoadCredentials(context:):CredentialTools.swift">
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.application(_:open:):AppTesterApp.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "firstUrl?">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

@@ -19,7 +19,7 @@ struct CredentialsView: View {
             TextField("Token", text: $token)
             SecureField("Password", text: $password)
             Button("Login") {
-                context.loggedIn = true
+                context.haveCredentials = true
                 context.token = token
                 context.password = password
                 context.objectWillChange.send()
@@ -35,7 +35,7 @@ class CredentialsViewDelegate: NSObject, NSWindowDelegate {
     var context = Context.shared
     func windowWillClose(_ notification: Notification) {
         print("windowWillClose")
-        context.loggedIn = true
+        context.haveCredentials = true
 
         Task {
             await SaveCredentials(context: context)
