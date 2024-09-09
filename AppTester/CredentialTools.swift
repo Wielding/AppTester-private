@@ -18,11 +18,21 @@ func SaveCredentials(context: Context) async -> Bool {
     
     var queue: DispatchQueue = DispatchQueue(label: "com.pushinator.saveCredentials")
     
-    queue.async {
+    queue.sync {
         let tokenQueryStatus = SecItemAdd(tokenQuery as CFDictionary, nil)
         
         if tokenQueryStatus != errSecSuccess {
-            context.logger.error("Error saving token to keychain")
+            let error = SecCopyErrorMessageString(tokenQueryStatus, nil)
+            
+            context.logger.error("Error saving token to keychain: \(error as String? ?? "unknown error")")
+            
+            let tokenQueryStatus = SecItemUpdate(tokenQuery as CFDictionary, [kSecValueData as String: context.token.data(using: .utf8)!] as CFDictionary)
+            
+            if tokenQueryStatus != errSecSuccess {
+                let error = SecCopyErrorMessageString(tokenQueryStatus, nil)
+                context.logger.error("Error updating token in keychain: \(error as String? ?? "unknown error")")
+            }
+            
         } else {
             context.haveCredentials = true
         }
@@ -35,11 +45,20 @@ func SaveCredentials(context: Context) async -> Bool {
                                         kSecAttrServer as String: "pushinator.clientId.test",
                                         kSecValueData as String: context.clientId.data(using: .utf8)!,]
     
-    queue.async {
-        let clientIdQueryStatus = SecItemAdd(clientIdQuery as CFDictionary, nil)
+    queue.sync {
+        var clientIdQueryStatus = SecItemAdd(clientIdQuery as CFDictionary, nil)
         
         if clientIdQueryStatus != errSecSuccess {
-            context.logger.error("Error saving clientId to keychain")
+            var error = SecCopyErrorMessageString(clientIdQueryStatus, nil)
+            
+            context.logger.error("Error saving clientId to keychain: \(error as String? ?? "unknown error")")
+            
+            clientIdQueryStatus = SecItemUpdate(clientIdQuery as CFDictionary, [kSecValueData as String: context.clientId.data(using: .utf8)!] as CFDictionary)
+            
+            if clientIdQueryStatus != errSecSuccess {
+                var error = SecCopyErrorMessageString(clientIdQueryStatus, nil)
+                context.logger.error("Error updating clientId in keychain: \(error as String? ?? "unknown error")")
+            }
         }
     }
     
@@ -49,11 +68,22 @@ func SaveCredentials(context: Context) async -> Bool {
                                         kSecAttrServer as String: "pushinator.password.test",
                                         kSecValueData as String: context.password.data(using: .utf8)!,]
     
-    queue.async {
-        let passwordQueryStatus = SecItemAdd(passwordQuery as CFDictionary, nil)
+    queue.sync {
+        var passwordQueryStatus = SecItemAdd(passwordQuery as CFDictionary, nil)
         
         if passwordQueryStatus != errSecSuccess {
-            context.logger.error("Error saving password to keychain")
+           var error = SecCopyErrorMessageString(passwordQueryStatus, nil)
+            context.logger.error("Error saving password to keychain: \(error as String? ?? "unknown error")")
+            
+            passwordQueryStatus = SecItemUpdate(passwordQuery as CFDictionary, [kSecValueData as String: context.password.data(using: .utf8)!] as CFDictionary)
+            
+            if passwordQueryStatus != errSecSuccess {
+                var error = SecCopyErrorMessageString(passwordQueryStatus, nil)
+                context.logger.error("Error updating password in keychain: \(error as String? ?? "unknown error")")
+            }
+            
+            
+            
         }
     }
     

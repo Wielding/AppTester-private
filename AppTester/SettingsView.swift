@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @StateObject var context = Context.shared
-    @State private var password: String = ""
-    @State private var clientId: String = ""
-    @State private var encryptionEnabled: Bool = false
+    var context = Context.shared
+    @State private var password: String = Context.shared.password
+    @State private var clientId: String = Context.shared.clientId
+    @State private var encryptionEnabled: Bool = !Context.shared.password.isEmpty
     @Environment(\.dismiss) var dismiss
     
     init() {
-
+        if !context.password.isEmpty {
+            encryptionEnabled = true
+        }
     }
         
     var body: some View {
@@ -25,23 +27,31 @@ struct SettingsView: View {
                 .lineLimit(3)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
-            TextField("Client ID", text: $context.clientId).frame(width: 200)
+            TextField("Client ID", text: $clientId).frame(width: 200)
             VStack {
                 Toggle("Enable encryption", isOn: $encryptionEnabled)
             }.toggleStyle(.switch)
-            SecureField("Encryption Password", text: $context.password).disabled(!encryptionEnabled).frame(width: 200)
+            SecureField("Encryption Password", text: $password).disabled(!encryptionEnabled).frame(width: 200)
             HStack {
                 Button("Cancel") {
                     dismiss()
                 }
                 Button("Save") {
-                    context.password = password
-                    context.clientId = clientId
                     
                     Task {
-                        await SaveCredentials(context: context)
+                        if encryptionEnabled {
+                            context.password = password
+                        } else {
+                            context.password = ""
+                            password = ""
+                        }
+
+                        context.clientId = clientId
+                        
+                        _ = await SaveCredentials(context: context)
+                        context.objectWillChange.send()
                     }
-                    context.objectWillChange.send()
+
                     dismiss()
                 }
             }
@@ -57,9 +67,6 @@ struct SettingsView: View {
 
 class SettingsViewDelegate: NSObject, NSWindowDelegate {
     var context = Context.shared
-    
-
-    
 
     func windowWillClose(_ notification: Notification) {
         print("windowWillClose")
