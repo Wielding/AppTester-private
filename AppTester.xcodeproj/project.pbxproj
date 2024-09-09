@@ -12,6 +12,8 @@
 		B282B6B82C8E51A200019D8F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B282B6B72C8E51A200019D8F /* Assets.xcassets */; };
 		B282B6BB2C8E51A200019D8F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B282B6BA2C8E51A200019D8F /* Preview Assets.xcassets */; };
 		B282B6C32C8E590600019D8F /* CredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B282B6C22C8E590600019D8F /* CredentialsView.swift */; };
+		B282B6C52C8E699B00019D8F /* CredentialTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = B282B6C42C8E699B00019D8F /* CredentialTools.swift */; };
+		B282B6C72C8E74A200019D8F /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B282B6C62C8E74A200019D8F /* MenuBarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		B282B6BA2C8E51A200019D8F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B282B6BC2C8E51A200019D8F /* AppTester.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AppTester.entitlements; sourceTree = "<group>"; };
 		B282B6C22C8E590600019D8F /* CredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsView.swift; sourceTree = "<group>"; };
+		B282B6C42C8E699B00019D8F /* CredentialTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialTools.swift; sourceTree = "<group>"; };
+		B282B6C62C8E74A200019D8F /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,8 @@
 				B282B6BC2C8E51A200019D8F /* AppTester.entitlements */,
 				B282B6B92C8E51A200019D8F /* Preview Content */,
 				B282B6C22C8E590600019D8F /* CredentialsView.swift */,
+				B282B6C42C8E699B00019D8F /* CredentialTools.swift */,
+				B282B6C62C8E74A200019D8F /* MenuBarView.swift */,
 			);
 			path = AppTester;
 			sourceTree = "<group>";
@@ -142,9 +148,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B282B6C52C8E699B00019D8F /* CredentialTools.swift in Sources */,
 				B282B6B62C8E51A100019D8F /* ContentView.swift in Sources */,
 				B282B6B42C8E51A100019D8F /* AppTesterApp.swift in Sources */,
 				B282B6C32C8E590600019D8F /* CredentialsView.swift in Sources */,
+				B282B6C72C8E74A200019D8F /* MenuBarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

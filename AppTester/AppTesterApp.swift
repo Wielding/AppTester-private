@@ -25,8 +25,7 @@ struct AppTesterApp: App {
     
     var body: some Scene {
         MenuBarExtra {
-            Text("Hello Status Bar Menu!")
-            Text(context.password)
+            MenuBarView()
             Divider()
             Button("Quit") { NSApp.terminate(nil) }
         } label: {
@@ -51,19 +50,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
         styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
         backing: .buffered, defer: false)
+
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         
-        if !context.loggedIn {
-            let credentialsView = CredentialsView()
+        
+        Task {
+            let success = await LoadCredentials(context: &context)
             
-            window.center()
-            window.setFrameAutosaveName("Credentials Window")
-            window.contentView = NSHostingView(rootView: credentialsView)
-            window.delegate = credentialsDelegate
-            window.makeKeyAndOrderFront(nil)
+            if !context.loggedIn || !success {
+                let credentialsView = CredentialsView()
+                
+                window.center()
+                window.setFrameAutosaveName("Credentials Window")
+                window.contentView = NSHostingView(rootView: credentialsView)
+                window.delegate = credentialsDelegate
+                window.makeKeyAndOrderFront(nil)
+                
+            } else {
+                context.objectWillChange.send()
+            }
             
         }
+        
+        
+        print("applicationDidFinishLaunching")
+        
         
         //        NSApplication.shared.setActivationPolicy(.regular)
         //        NSApplication.shared.activate(ignoringOtherApps: true)
@@ -81,35 +93,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-class CredentialsViewDelegate: NSObject, NSWindowDelegate {
-    var context = Context.shared
-    func windowWillClose(_ notification: Notification) {
-        print("windowWillClose")
-        // save password and token in keychain
-        context.loggedIn = true
-        let tokenQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
-                                    kSecAttrAccount as String: "pushinator.test",
-                                    kSecAttrServer as String: "pushinator.token.test",
-                                    kSecValueData as String: context.token.data(using: .utf8)!,]
-        
-        let tokenQueryStatus = SecItemAdd(tokenQuery as CFDictionary, nil)
-        
-        if tokenQueryStatus != errSecSuccess {
-            print("Error saving token to keychain")
-        }
-        
-        let passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
-                                    kSecAttrAccount as String: "pushinator.test",
-                                    kSecAttrServer as String: "pushinator.password.test",
-                                    kSecValueData as String: context.password.data(using: .utf8)!,]
-        
-        let passwordQueryStatus = SecItemAdd(passwordQuery as CFDictionary, nil)
-        
-        if passwordQueryStatus != errSecSuccess {
-            print("Error saving password to keychain")
-        }
-        
-        
-        
-    }
-}
+

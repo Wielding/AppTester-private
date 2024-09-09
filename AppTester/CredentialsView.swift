@@ -31,6 +31,20 @@ struct CredentialsView: View {
 
 }
 
+class CredentialsViewDelegate: NSObject, NSWindowDelegate {
+    var context = Context.shared
+    func windowWillClose(_ notification: Notification) {
+        print("windowWillClose")
+        context.loggedIn = true
+
+        Task {
+            await SaveCredentials(context: context)
+        }
+        
+        
+    }
+}
+
 #Preview {
     CredentialsView()
 }
