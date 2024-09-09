@@ -21,7 +21,6 @@ class Context : ObservableObject {
 struct AppTesterApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var context = Context.shared
-    //    let logger = Logger(subsystem: "net.wielding.pushinator", category: "AppTester")
     
     init() {
     }
@@ -41,11 +40,6 @@ struct AppTesterApp: App {
         }
         .defaultSize(CGSize(width: 400, height: 200))
         
-        //        WindowGroup {
-        //            CredentialsView()
-        //                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        //                .padding()
-        //        }
     }
 }
 
@@ -55,13 +49,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     var context = Context.shared
     
-    //    var credentialsDelegate = CredentialsViewDelegate()
-    //    let window = NSWindow(
-    //        contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
-    //        styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-    //        backing: .buffered, defer: false)
-    
     func application(_ application: NSApplication, open urls: [URL]) {
+        
         let firstUrl = URLComponents(url: urls[0], resolvingAgainstBaseURL: false)
         // parse last value after =
         let tokenFragment = firstUrl?.fragment
@@ -69,14 +58,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let token = tokenFragment?.components(separatedBy: "=").last
         
         if let token = token {
-            context.token = token
-            context.password = "Logged In"
             context.haveCredentials = true
             Task {
-                await SaveCredentials(context: context)
+                _ = await LoadCredentials(context: &context)
+                context.token = token
+                _ = await SaveCredentials(context: context)
+                
             }
             context.objectWillChange.send()
         }
+        
+        
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -89,21 +81,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             context.objectWillChange.send()
             
         }
+        NSApp.setActivationPolicy(.accessory)
         
-        //
-        //
-        //        print("applicationDidFinishLaunching")
-                NSApp.setActivationPolicy(.accessory)
-        
-        //        NSApplication.shared.setActivationPolicy(.regular)
-                NSApplication.shared.activate(ignoringOtherApps: true)
-        
-        //        if context.loggedIn {
-        //            NSApp.setActivationPolicy(.prohibited)
-        //        } else {
-        //            //            NSApp.setActivationPolicy(.regular)
-        //            //            NSApp.activate(ignoringOtherApps: true)
-        //        }
+        NSApplication.shared.activate(ignoringOtherApps: true)
     }
     
     func applicationWillFinishLaunching(_ notification: Notification) {

@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State var context = Context.shared
-    @State private var password: String = ""
-    @State private var clientId: String = ""
+    var context = Context.shared
+    @State private var password: String = Context.shared.password
+    @State private var clientId: String = Context.shared.clientId
     @State private var encryptionEnabled: Bool = false
     @Environment(\.dismiss) var dismiss
-    
+        
     var body: some View {
 
         VStack {
@@ -30,6 +30,10 @@ struct SettingsView: View {
             Button("Save") {
                 context.password = password
                 context.clientId = clientId
+                
+                Task {
+                    await SaveCredentials(context: context)
+                }
                 context.objectWillChange.send()
                 dismiss()
             }
@@ -42,6 +46,10 @@ struct SettingsView: View {
 
 class SettingsViewDelegate: NSObject, NSWindowDelegate {
     var context = Context.shared
+    
+
+    
+
     func windowWillClose(_ notification: Notification) {
         print("windowWillClose")
         

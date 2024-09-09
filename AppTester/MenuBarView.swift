@@ -15,7 +15,7 @@ struct MenuBarView: View {
     
     var body: some View {
         VStack {
-            Link("Login", destination: URL(string: "https://www.pushbullet.com/authorize?client_id=ealaY3f6ILh9c5unQSyHVruI5y7Jlz6z&redirect_uri=apptester%3A%2F%2Fpushbullet.com%2Flogin-success&response_type=token&scope=everything")!)
+            Link("Login", destination: URL(string: "https://www.pushbullet.com/authorize?client_id=\(context.clientId)&redirect_uri=apptester%3A%2F%2Fpushbullet.com%2Flogin-success&response_type=token&scope=everything")!)
 
             Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
             Button("Settings") {
