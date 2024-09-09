@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import OSLog
 
 func SaveCredentials(context: Context) async -> Bool {
+    var success = false
     let tokenQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
                                      kSecAttrAccount as String: "pushinator.test",
                                      kSecAttrServer as String: "pushinator.token.test",
@@ -20,26 +22,30 @@ func SaveCredentials(context: Context) async -> Bool {
         
         if tokenQueryStatus != errSecSuccess {
             print("Error saving token to keychain")
+        } else {
+            context.loggedIn = true
         }
-    }
-    
-    let passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
-                                     kSecAttrAccount as String: "pushinator.test",
-                                     kSecAttrServer as String: "pushinator.password.test",
-                                     kSecValueData as String: context.password.data(using: .utf8)!,]
-    
-    queue.async {
-        let passwordQueryStatus = SecItemAdd(passwordQuery as CFDictionary, nil)
         
-        if passwordQueryStatus != errSecSuccess {
-            print("Error saving password to keychain")
-        }
     }
+        
+    //    let passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+    //                                     kSecAttrAccount as String: "pushinator.test",
+    //                                     kSecAttrServer as String: "pushinator.password.test",
+    //                                     kSecValueData as String: context.password.data(using: .utf8)!,]
+    //
+    //    queue.async {
+    //        let passwordQueryStatus = SecItemAdd(passwordQuery as CFDictionary, nil)
+    //
+    //        if passwordQueryStatus != errSecSuccess {
+    //            print("Error saving password to keychain")
+    //        }
+    //    }
     
-    return true
+    return context.loggedIn
 }
 
 func LoadCredentials(context :inout Context) async -> Bool {
+//    let logger = Logger(subsystem: "net.wielding.pushinator", category: "LoadCredentials")
     
     var tokenQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
                                      kSecAttrAccount as String: "pushinator.test",
@@ -55,15 +61,16 @@ func LoadCredentials(context :inout Context) async -> Bool {
         context.token = String(data: tokenData, encoding: .utf8)!
         context.loggedIn = true
     } else {
-        print("Error loading token from keychain")
+        context.logger.error("Error loading token from keychain")
+        
         context.loggedIn = false
     }
     
     var passwordQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
-                                     kSecAttrAccount as String: "pushinator.test",
-                                     kSecAttrServer as String: "pushinator.password.test",
-                                     kSecReturnData as String: kCFBooleanTrue as Any,
-                                     kSecMatchLimit as String: kSecMatchLimitOne]
+                                        kSecAttrAccount as String: "pushinator.test",
+                                        kSecAttrServer as String: "pushinator.password.test",
+                                        kSecReturnData as String: kCFBooleanTrue as Any,
+                                        kSecMatchLimit as String: kSecMatchLimitOne]
     
     let passwordQueryStatus = SecItemCopyMatching(passwordQuery as CFDictionary, &item)
     
@@ -72,13 +79,17 @@ func LoadCredentials(context :inout Context) async -> Bool {
         context.password = String(data: passwordData, encoding: .utf8)!
         context.loggedIn = true
     } else {
-        print("Error loading password from keychain")
+        context.logger.error("Error loading password from keychain")
         context.loggedIn = false
     }
-
-        
-    return true
-}
     
+    if context.loggedIn {
+        context.logger.info("Credentials loaded successfully")
+    }
+    
+    return context.loggedIn
+    
+}
 
-        
+
+
