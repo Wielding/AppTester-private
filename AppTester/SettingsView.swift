@@ -25,7 +25,7 @@ struct SettingsView: View {
                 .lineLimit(3)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
-            TextField("Client ID", text: $context.token).frame(width: 200)
+            TextField("Client ID", text: $context.clientId).frame(width: 200)
             VStack {
                 Toggle("Enable encryption", isOn: $encryptionEnabled)
             }.toggleStyle(.switch)
