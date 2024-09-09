@@ -8,13 +8,12 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>apptester_id</string>
+			<string>dev.wielding.AppTester</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>apptester</string>
 			</array>
 		</dict>
-		<dict/>
 	</array>
 </dict>
 </plist>

@@ -45,11 +45,13 @@ struct AppTesterApp: App {
 
 
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     
     var context = Context.shared
-    
+
     func application(_ application: NSApplication, open urls: [URL]) {
+        
+        context.logger.debug("application open urls")
         
         let firstUrl = URLComponents(url: urls[0], resolvingAgainstBaseURL: false)
         // parse last value after =
@@ -60,18 +62,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let token = token {
             context.haveCredentials = true
             Task {
+                context.logger.debug("saving token from URL")
                 _ = await LoadCredentials(context: &context)
                 context.token = token
                 _ = await SaveCredentials(context: context)
                 
+                context.objectWillChange.send()
+                
             }
-            context.objectWillChange.send()
         }
         
         
     }
+
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        
+        
         
         context.logger.debug("applicationDidFinishLaunching")
         
